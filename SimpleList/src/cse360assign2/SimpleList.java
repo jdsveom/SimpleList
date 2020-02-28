@@ -1,11 +1,13 @@
 /**
  * Name: Jeremy Sveom
  * Class ID: 182
- * Assignment #1
+ * Assignment #2
  * 
- * SimpleList is a class in which a 10 index array is housed and modified. This
- * array can be modified by adding, removing, and searching. The count of the
- * array is also stored in this class and can be requested.
+ * SimpleList is a class in which an array is housed and modified. This array
+ * can be modified by adding, removing, and searching. The count of the array
+ * is also stored in this class and can be requested. The add and remove
+ * methods automatically change the size of the array to better fit the data
+ * being saved.
  * 
  * @author Jeremy Sveom
  * @version %G%
@@ -30,21 +32,41 @@ public class SimpleList {
 	/**
 	 * The add method adds the passed integer to the 'head' of the array. All
 	 * other integers are moved down one index. If the list is full, then the
-	 * last integer 'drops off' the list.
+	 * array increases by 50%.
 	 * 
 	 * @param add	the integer to be added to the list
 	 */
-	public void add(int add) {		
+	public void add(int add) {	
+		// If the list is full, make the array 50% bigger
+		if(count == list.length) {
+			int temp[] = list;
+			
+			int newLength = 2;
+			
+			// If the list is already 1 index, then increasing it by 50% will
+			// not get us to 2. So, we need to make sure this does not throw
+			// an exception.
+			if(list.length != 1) {
+				// calculate the length of the list using the floor function
+				newLength = (int) Math.floor(count * 1.5);
+			}
+			
+			list = new int[newLength];
+			
+			// Fill in the new list with the old values
+			for (int index = 0; index < count; index++) {
+				list[index] = temp[index];
+			}
+		}
+		
 		// move all other entries over one index
-		for(int index = 8; index >= 0; index--) {
+		for(int index = count - 1; index >= 0; index--) {
 			list[index + 1] = list[index];
 		}
 		
 		list[0] = add;
 		
-		if (count < 10) {
-			count ++;
-		}
+		count ++;
 		
 		return;
 	}
@@ -52,7 +74,8 @@ public class SimpleList {
 	/**
 	 * The remove method removes the first instance of the passed integer. This
 	 * method relies on the search method to find the first instance of the
-	 * integer.
+	 * integer. If the list has more than 25% empty spaces, then it will
+	 * decrease the size of the list until it does not.
 	 * 
 	 * @param remove		integer to be removed from the list
 	 */
@@ -60,12 +83,37 @@ public class SimpleList {
 		int location = search(remove);
 		
 		if (location != -1) {
-			// parse through the array and move all values down one to fill in
+			list[location] = 0;
+			
+			// Parse through the array and move all values down one to fill in
 			// the gap.
 			for(int index = location; index < count - 1; index++) {
 				list[index] = list[index + 1];
 			}
+			list[count - 1] = 0;
 			count --;
+		}
+		
+		// Calculate empty space
+		int numEmptySpaces = list.length - count;
+		double percentEmptySpaces = (double) numEmptySpaces / list.length;
+		
+		// Continue to decrease the length of the list until it has less than
+		// 25% empty space.
+		while ((percentEmptySpaces > 0.25) && (list.length > 1)) {
+			int temp[] = list;
+			
+			int newLength = list.length - 1;
+			
+			list = new int[newLength];
+			
+			for (int index = 0; index < count; index++) {
+				list[index] = temp[index];
+			}
+			
+			// Recalculate empty space
+			numEmptySpaces = list.length - count;
+			percentEmptySpaces = (double) numEmptySpaces / list.length;
 		}
 		
 		return;
