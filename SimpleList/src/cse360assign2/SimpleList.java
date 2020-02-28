@@ -4,10 +4,10 @@
  * Assignment #2
  * 
  * SimpleList is a class in which an array is housed and modified. This array
- * can be modified by adding, removing, and searching. The count of the array
- * is also stored in this class and can be requested. The add and remove
- * methods automatically change the size of the array to better fit the data
- * being saved.
+ * can be modified by adding, appending, removing, and searching. The count,
+ * first index, last index, and size of the array is also stored in this class
+ * and can be requested. The add and remove methods automatically change the
+ * size of the array to better fit the data being saved.
  * 
  * @author Jeremy Sveom
  * @version %G%
@@ -72,6 +72,68 @@ public class SimpleList {
 	}
 	
 	/**
+	 * The append method adds the passed integer to the 'tail' of the array.
+	 * If the array is full the size of the array increases by 50%.
+	 * 
+	 * @param append		the integer to be added to the end of the list
+	 */
+	public void append(int append) {
+		// If the list is full, make the array 50% bigger
+		if(count == list.length) {
+			int temp[] = list;
+			
+			int newLength = 2;
+			
+			// If the list is already 1 index, then increasing it by 50% will
+			// not get us to 2. So, we need to make sure this does not throw
+			// an exception.
+			if(list.length != 1) {
+				// calculate the length of the list using the floor function
+				newLength = (int) Math.floor(count * 1.5);
+			}
+			
+			list = new int[newLength];
+			
+			// Fill in the new list with the old values
+			for (int index = 0; index < count; index++) {
+				list[index] = temp[index];
+			}
+		}
+		
+		list[count] = append;
+		
+		count ++;
+		
+		return;
+	}
+
+	/**
+	 * The search method searches for the passed integer within the list and
+	 * returns the location of that integer as an index.
+	 * 
+	 * @param search		the integer to be searched for in the list
+	 * @return			the index at which the integer is located. Returns -1
+	 * 					if the integer cannot be found.
+	 */
+	public int search(int search) {
+		int location = -1;
+		boolean found = false;
+		int index = 0;
+		
+		// traverse through the array, checking each index for equality
+		while(!found && index <= count - 1) {
+			if(list[index] == search) {
+				location = index;
+				found = true;
+			} else {
+				index++;
+			}
+		}
+		
+		return location;
+	}
+
+	/**
 	 * The remove method removes the first instance of the passed integer. This
 	 * method relies on the search method to find the first instance of the
 	 * integer. If the list has more than 25% empty spaces, then it will
@@ -130,6 +192,46 @@ public class SimpleList {
 	}
 	
 	/**
+	 * The first method returns the first index of the list. If the list is
+	 * empty, it returns -1.
+	 */
+	public int first() {
+		int first = -1;
+		
+		if (count != 0) {
+			first = list[0];
+		}
+		
+		return first;
+	}
+
+	/**
+	 * The last method returns the last index of the list. If the list is
+	 * empty, it returns -1.
+	 */
+	public int last() {
+		int last = -1;
+		
+		if (count != 0) {
+			last = list[count - 1];
+		}
+		
+		return last;
+	}
+	
+	/**
+	 * The size method returns the current number of possible locations in the
+	 * list.
+	 */
+	public int size() {
+		int size = 0;
+		
+		size = list.length;
+		
+		return size;
+	}
+
+	/**
 	 * The toString method overwrites the built in Java toString method. It
 	 * traverses through the list and creates a String containing all of the
 	 * current entries.
@@ -151,31 +253,5 @@ public class SimpleList {
 		}
 		
 		return listString;
-	}
-	
-	/**
-	 * The search method searches for the passed integer within the list and
-	 * returns the location of that integer as an index.
-	 * 
-	 * @param search		the integer to be searched for in the list
-	 * @return			the index at which the integer is located. Returns -1
-	 * 					if the integer cannot be found.
-	 */
-	public int search(int search) {
-		int location = -1;
-		boolean found = false;
-		int index = 0;
-		
-		// traverse through the array, checking each index for equality
-		while(!found && index <= count - 1) {
-			if(list[index] == search) {
-				location = index;
-				found = true;
-			} else {
-				index++;
-			}
-		}
-		
-		return location;
 	}
 }
